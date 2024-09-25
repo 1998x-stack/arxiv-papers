@@ -1,5 +1,4 @@
 feedparser
-smtplib
 markdown
 wordcloud
 matplotlib
