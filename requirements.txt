@@ -2,4 +2,4 @@ feedparser
 markdown
 wordcloud
 matplotlib
-rake-nltk
+python-rake
