@@ -11,7 +11,8 @@ class MarkdownFormatter:
     def format_papers(papers):
         markdown_content = ''
         for paper in papers:
-            markdown_content += f"### [{paper['title']}]({paper['link']})\n"
+            title = paper['title'].replace('"', '').replace("'", '').replace('&', 'and').replace('(', '').replace(')', '').replace('\n','')
+            markdown_content += f"### [{title}]({paper['link']})\n"
             markdown_content += f"*Authors*: {', '.join(paper['authors'])}\n\n"
             markdown_content += f"{paper['summary']}\n\n"
         # Convert Markdown to HTML
