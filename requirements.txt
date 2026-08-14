@@ -1,5 +1,4 @@
 feedparser
-markdown
 wordcloud
 matplotlib
-python-rake
+pytest
