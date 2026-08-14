@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="arxiv-digest — a daily digest of the latest machine-learning papers from arXiv, distilled into a clean HTML email with a word cloud of the day's themes.">
+  <title>arXiv Digest — the day&rsquo;s papers, distilled</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="masthead wrap">
+    <a class="brand" href="#top" aria-label="arxiv-digest home">
+      <span class="brand-mark" aria-hidden="true">∑</span>
+      <span class="brand-name">arxiv-digest</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#install">Install</a>
+      <a href="#usage">Usage</a>
+      <a class="nav-gh" href="https://github.com/1998x-stack/arxiv-papers" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+
+  <header id="top" class="hero wrap">
+    <div class="hero-copy">
+      <p class="eyebrow">A daily email from arXiv</p>
+      <h1>The week&rsquo;s research, <em>distilled.</em></h1>
+      <p class="lede">
+        arxiv-digest pulls the newest machine-learning, AI, neural, and vision
+        papers from <strong>arXiv</strong>, reads the day&rsquo;s themes back to
+        you as a <strong>word cloud</strong>, and sends a clean HTML list straight
+        to your inbox — on a schedule you set.
+      </p>
+      <div class="hero-actions">
+        <a class="cta" href="#install">Get started</a>
+        <a class="cta ghost" href="https://github.com/1998x-stack/arxiv-papers" target="_blank" rel="noopener">View source</a>
+      </div>
+    </div>
+    <div class="cloud" id="cloud" role="img" aria-label="A word cloud of themes the digest surfaces — attention, transformers, retrieval, scope, datasets, and more">
+      <!-- words injected by app.js -->
+    </div>
+  </header>
+
+  <p class="strip"><span>cs.LG</span><span>cs.AI</span><span>cs.NE</span><span>cs.CV</span><span>daily · 08:00 UTC</span></p>
+
+  <main id="main" class="wrap">
+
+    <section id="how" class="section">
+      <p class="kicker">The pipeline</p>
+      <h2>Fetch. Read. Send.</h2>
+      <ol class="steps">
+        <li>
+          <h3 data-n="01">Fetch</h3>
+          <p>Query the arXiv API for the latest papers across your chosen categories, sorted by recency.</p>
+        </li>
+        <li>
+          <h3 data-n="02">Distill</h3>
+          <p>Extract the recurring terms from titles and abstracts and compose them into a word cloud.</p>
+        </li>
+        <li>
+          <h3 data-n="03">Send</h3>
+          <p>Build an HTML digest &mdash; one linked entry per paper &mdash; attach the cloud, and deliver it over SMTP.</p>
+        </li>
+      </ol>
+      <p class="footnote">Run it on demand, or let GitHub Actions send it every morning at 08:00 UTC.</p>
+    </section>
+
+    <section id="install" class="section split">
+      <div>
+        <p class="kicker">Install</p>
+        <h2>Two commands to your first digest.</h2>
+      </div>
+      <pre class="code"><code><span class="cm"># create an environment</span>
+python3 -m venv .venv
+source .venv/bin/activate
+
+<span class="cm"># install and go</span>
+pip install -r requirements.txt
+pip install -e .
+arxiv-digest --dry-run</code></pre>
+    </section>
+
+    <section id="usage" class="section">
+      <p class="kicker">Usage</p>
+      <h2>Configure it, then forget it.</h2>
+      <p class="lead">
+        Everything is read from environment variables &mdash; validate a run locally
+        with <code class="inline">--dry-run</code> (no credentials, no email), then
+        schedule it and let it run.
+      </p>
+      <div class="config">
+        <div class="card">
+          <h3>Preview without sending</h3>
+          <pre class="code tight"><code>arxiv-digest --dry-run \
+  --categories cs.AI --max-results 5</code></pre>
+        </div>
+        <div class="card">
+          <h3>Send a digest</h3>
+          <pre class="code tight"><code>EMAIL_USERNAME=you@gmail.com \
+EMAIL_PASSWORD=app-password \
+EMAIL_TO=you@gmail.com \
+arxiv-digest</code></pre>
+        </div>
+      </div>
+
+      <table class="env">
+        <caption>Environment variables</caption>
+        <thead>
+          <tr><th scope="col">Variable</th><th scope="col">Default</th><th scope="col">Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>EMAIL_USERNAME</td><td>—</td><td>account that sends the digest</td></tr>
+          <tr><td>EMAIL_PASSWORD</td><td>—</td><td>app password for that account</td></tr>
+          <tr><td>EMAIL_TO</td><td>sender</td><td>recipients, comma-separated</td></tr>
+          <tr><td>DIGEST_CATEGORIES</td><td>cs.LG, cs.AI, cs.NE, cs.CV</td><td>arXiv categories to query</td></tr>
+          <tr><td>DIGEST_MAX_RESULTS</td><td>50</td><td>max papers per digest</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer class="foot wrap">
+    <span>arXiv<sup>®</sup> is a registered trademark of Cornell University.</span>
+    <a href="https://github.com/1998x-stack/arxiv-papers" target="_blank" rel="noopener">github.com/1998x-stack/arxiv-papers</a>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
