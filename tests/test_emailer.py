@@ -19,7 +19,7 @@ def test_build_message_headers_and_attachment(tmp_path):
     assert msg["From"] == "me@gmail.com"
     assert msg["To"] == "a@x.com, b@x.com"
     assert msg["Subject"] == "Subject X"
-    types = [p.get_content_type() for p in msg.iter_parts()]
+    types = [p.get_content_type() for p in msg.get_payload()]
     assert "text/html" in types
     assert "application/octet-stream" in types
 
