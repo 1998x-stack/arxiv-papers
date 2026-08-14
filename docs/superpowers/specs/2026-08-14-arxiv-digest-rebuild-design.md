@@ -112,7 +112,7 @@ arxiv-papers/
 | `config.py` | Config dataclass; env + CLI overrides; validation | — | env vars |
 | `models.py` | `Article` dataclass | — | no |
 | `fetcher.py` | Fetch arXiv feed → `list[Article]` | config, models, feedparser | yes (network) |
-| `formatter.py` | Build HTML email body from articles | models | no |
+| `formatter.py` | Build HTML email body from an HTML template, escaping only paper content | models | no |
 | `wordcloud.py` | Build word-cloud PNG from articles | wordcloud lib | no (writes file) |
 | `emailer.py` | Build MIME message; send via SMTP; dry-run | config | yes (SMTP) |
 | `cli.py` | Parse args, validate config, drive pipeline | all | orchestrates |
@@ -152,7 +152,8 @@ Replaces the ad-hoc dicts of the original.
 ## Email Body
 
 - Subject: `Latest ML Papers (YYYY-MM-DD HH:MM)` with generated timestamp.
-- Body: one `h3` linked title + authors + summary per article, HTML-escaped.
+- Body: one `h3` linked title + authors + summary per article, built from an HTML template
+  that escapes only the paper content (titles/authors/summaries). No markdown round-trip.
 - Word-cloud PNG attached.
 
 ## Error Handling
@@ -202,8 +203,9 @@ Secrets: `EMAIL_USERNAME`, `EMAIL_PASSWORD`, `EMAIL_TO` (optional).
 ## Build Tooling & Hygiene
 
 - `pyproject.toml` with `[project.scripts] arxiv-digest = "src.arxiv_digest.cli:main"`.
-- `requirements.txt` trimmed to: `feedparser`, `wordcloud`, `matplotlib`, `markdown`,
-  plus `pytest` as dev extra. Removes `python-rake`/`rake-nltk`.
+- `requirements.txt` trimmed to: `feedparser`, `wordcloud`, `matplotlib`, plus `pytest`
+  as dev extra. Removes `python-rake`/`rake-nltk`; the `markdown` library is dropped too
+  (formatter builds HTML directly).
 - `README.md` fully rewritten for the real config, CLI, workflow, setup.
 - `.gitignore`: word-cloud output, `__pycache__`, venv, `.env`.
 
@@ -212,7 +214,6 @@ Secrets: `EMAIL_USERNAME`, `EMAIL_PASSWORD`, `EMAIL_TO` (optional).
 - `feedparser` — arXiv API parse
 - `wordcloud` — word cloud PNG
 - `matplotlib` — word cloud renderer backend
-- `markdown` — markdown → HTML for body
 - `pytest` (dev)
 
 ## Open Questions / Placeholders
