@@ -3,11 +3,12 @@
   "use strict";
 
   var terms = [
-    ["attention", 34], ["transformers", 30], ["retrieval", 26],
-    ["embeddings", 30], ["datasets", 24], ["scope", 22], ["FM-Index", 20],
-    ["abstract", 26], ["question", 22], ["ranking", 24], ["generative", 28],
-    ["syllabus", 20], ["signature", 22], ["weekly", 18], ["papers", 30],
-    ["arXiv", 30], ["model", 26], ["inbox", 22]
+    ["attention", 34], ["transformers", 30], ["retrieval", 28],
+    ["embeddings", 30], ["long-context", 24], ["ranking", 24],
+    ["generative", 26], ["sparse", 24], ["alignment", 28],
+    ["datasets", 24], ["distillation", 20], ["scope", 24],
+    ["safety", 20], ["papers", 28], ["arXiv", 34],
+    ["model", 28], ["abstract", 22], ["inbox", 18]
   ];
 
   var cloud = document.getElementById("cloud");
@@ -30,8 +31,8 @@
 
       word.style.fontSize = size + "px";
       word.style.fontWeight = (i % 3 === 0) ? 600 : 400;
-      word.style.left = (6 + Math.random() * (W * 0.72)) + "px";
-      word.style.top = (4 + Math.random() * (H * 0.78)) + "px";
+      word.style.left = (4 + Math.random() * (W * 0.62)) + "px";
+      word.style.top = (2 + Math.random() * (H * 0.72)) + "px";
       word.style.opacity = 0;
 
       cloud.appendChild(word);
