@@ -23,6 +23,7 @@ class Config:
     smtp_port: int
     categories: str
     max_results: int
+    dry_run: bool = False
 
     @property
     def category_list(self) -> list[str]:
@@ -50,7 +51,7 @@ def load_config(env=None, *, categories=None, max_results=None, to_emails=None, 
     smtp_server = env.get("SMTP_SERVER") or DEFAULT_SMTP_SERVER
     smtp_port = int(env.get("SMTP_PORT") or DEFAULT_SMTP_PORT)
 
-    cfg = Config(username, password, to, smtp_server, smtp_port, cats, mr)
+    cfg = Config(username, password, to, smtp_server, smtp_port, cats, mr, dry_run)
     validate(cfg, dry_run)
     return cfg
 
