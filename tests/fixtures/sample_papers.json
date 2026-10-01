@@ -1,0 +1,60 @@
+[
+  {
+    "id": "2101.12345",
+    "title": "Machine Learning Algorithm for Classification Tasks",
+    "summary": "This paper presents a novel machine learning algorithm for classification tasks. The approach achieves state-of-the-art results on benchmark datasets.",
+    "authors": [
+      "John Doe",
+      "Jane Smith"
+    ],
+    "published": "2021-01-15T10:30:00Z",
+    "updated": "2021-01-15T10:30:00Z",
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "http://arxiv.org/abs/2101.12345"
+      }
+    ],
+    "categories": [
+      {
+        "term": "cs.LG",
+        "scheme": "http://arxiv.org/schemas/atom"
+      },
+      {
+        "term": "stat.ML",
+        "scheme": "http://arxiv.org/schemas/atom"
+      }
+    ],
+    "primary_category": "cs.LG"
+  },
+  {
+    "id": "2012.56789",
+    "title": "Deep Reinforcement Learning in Robotics",
+    "summary": "This research explores the application of deep reinforcement learning techniques in robotics. Experimental results show significant improvements over traditional methods.",
+    "authors": [
+      "Alice Johnson",
+      "Bob Wilson"
+    ],
+    "published": "2020-12-20T14:45:00Z",
+    "updated": "2020-12-20T14:45:00Z",
+    "links": [
+      {
+        "rel": "alternate",
+        "type": "text/html",
+        "href": "http://arxiv.org/abs/2012.56789"
+      }
+    ],
+    "categories": [
+      {
+        "term": "cs.RO",
+        "scheme": "http://arxiv.org/schemas/atom"
+      },
+      {
+        "term": "cs.LG",
+        "scheme": "http://arxiv.org/schemas/atom"
+      }
+    ],
+    "primary_category": "cs.RO"
+  }
+]
