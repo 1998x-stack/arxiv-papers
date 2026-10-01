@@ -3,3 +3,9 @@ markdown
 wordcloud
 matplotlib
 python-rake
+rake-nltk
+spacy
+scikit-learn
+gensim
+yake
+nltk
