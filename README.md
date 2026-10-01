@@ -1,147 +1,196 @@
-# Latest Papers Emailer
+# arxiv-digest
 
-This project automates the process of fetching the latest deep learning, machine learning, and reinforcement learning papers from arXiv. It generates a word cloud from the abstracts and titles of the papers and sends an email with the paper summaries and word cloud image attached.
+Stay current with machine-learning research without leaving your inbox.
+
+`arxiv-digest` fetches the latest papers from arXiv, distils them into a compact
+HTML digest, and emails it on a schedule you control — optionally paired with a
+word-cloud image that visualizes the dominant themes of the day's submissions.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+  - [Environment variables](#environment-variables)
+  - [Precedence](#precedence)
+- [Usage](#usage)
+- [Automated Scheduling (GitHub Actions)](#automated-scheduling-github-actions)
+- [Testing](#testing)
+- [Project Structure](#project-structure)
+- [License](#license)
+
+---
 
 ## Features
 
-- Fetches the latest papers from arXiv categories:
-  - Deep Learning
-  - Machine Learning
-  - Reinforcement Learning
-  - Computer Vision
-  - Artificial Intelligence
-- Generates a word cloud from the paper abstracts and titles.
-- Sends a well-formatted email with the paper summaries and the word cloud image attached.
-- Automated workflow using GitHub Actions.
+- **Fetches the latest papers** from configurable arXiv categories — defaults to
+  machine learning, AI, neural networks, and computer vision.
+- **Keyword word cloud** generated from paper titles and abstracts, attached to
+  every digest email.
+- **Clean HTML digest** with one linked entry per paper (title, authors, abstract),
+  with all content HTML-escaped to prevent injection.
+- **Safe preview mode** (`--dry-run`) that renders the message locally without
+  sending anything or requiring credentials.
+- **Validated, layered configuration** through environment variables and CLI
+  flags, with clear error messages instead of silent crashes.
+- **Runs anywhere** via a console script or `python -m`, and can be scheduled
+  automatically with GitHub Actions.
+
+## Requirements
+
+- Python 3.9+
+- Internet access when fetching papers or sending email
+
+## Installation
+
+```bash
+git clone <repository-url>
+cd arxiv-papers
+
+# Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install runtime dependencies
+pip install -r requirements.txt
+
+# (Optional) Install the package in editable mode for the `arxiv-digest` command
+pip install -e .
+```
+
+## Quick Start
+
+Generate a preview digest (no credentials needed, no email sent):
+
+```bash
+arxiv-digest --dry-run --categories cs.AI --max-results 5
+```
+
+Check the rendered output, then send a real digest:
+
+```bash
+EMAIL_USERNAME=you@gmail.com \
+EMAIL_PASSWORD='your-app-password' \
+EMAIL_TO=you@gmail.com \
+arxiv-digest
+```
+
+## Configuration
+
+All settings are read from environment variables. CLI flags override them for a
+single invocation, and both fall back to sensible defaults.
+
+### Environment variables
+
+| Variable              | Required          | Default                     | Description                              |
+|-----------------------|-------------------|-----------------------------|------------------------------------------|
+| `EMAIL_USERNAME`      | unless `--dry-run`| —                           | SMTP account used to send the digest     |
+| `EMAIL_PASSWORD`      | unless `--dry-run`| —                           | SMTP account password or app password     |
+| `EMAIL_TO`            | no                | `EMAIL_USERNAME`            | Recipients (comma-separated)              |
+| `SMTP_SERVER`         | no                | `smtp.gmail.com`            | SMTP server host                          |
+| `SMTP_PORT`           | no                | `587`                       | SMTP port (STARTTLS)                      |
+| `DIGEST_CATEGORIES`   | no                | `cs.LG,cs.AI,cs.NE,cs.CV`   | arXiv categories to query                 |
+| `DIGEST_MAX_RESULTS`  | no                | `50`                        | Maximum papers to fetch                   |
+
+### Precedence
+
+Configuration is resolved in order of increasing priority:
+
+1. Built-in defaults
+2. Environment variables
+3. CLI flags (`--categories`, `--max-results`, `--to`)
+
+## Usage
+
+```text
+usage: arxiv-digest [-h] [--categories CATEGORIES] [--max-results MAX_RESULTS]
+                    [--to TO] [--dry-run]
+
+Fetch arXiv ML papers and email an HTML digest
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --categories CATEGORIES  comma-separated arXiv categories
+  --max-results MAX_RESULTS max papers to fetch
+  --to TO                   comma-separated recipients
+  --dry-run                 render a preview without sending email
+```
+
+### Preview a digest
+
+```bash
+arxiv-digest --dry-run --categories cs.CL --max-results 10
+```
+
+### Send a digest to yourself
+
+```bash
+export EMAIL_USERNAME="you@gmail.com"
+export EMAIL_PASSWORD="your-app-password"
+arxiv-digest
+```
+
+### Override categories and recipients for a single run
+
+```bash
+EMAIL_TO="alice@example.com, bob@example.com" \
+arxiv-digest --categories "cs.LG,cs.CV,cs.CL" --max-results 20
+```
+
+## Automated Scheduling (GitHub Actions)
+
+The repository includes a workflow (``.github/workflows/send_papers.yml`) that
+sends a digest every day at 08:00 UTC, and can also be triggered manually from
+the Actions tab.
+
+Configure these repository **secrets** under
+*Settings → Secrets and Variables → Actions*:
+
+| Secret name      | Purpose                                  |
+|------------------|------------------------------------------|
+| `EMAIL_USERNAME` | Email account that sends the digest       |
+| `EMAIL_PASSWORD` | Account password / app-specific password  |
+| `EMAIL_TO`       | Optional — recipients (comma-separated)   |
+
+The workflow also runs the offline test suite on every push to `main` and on
+pull requests, so changes are verified before they ship.
+
+## Testing
+
+The test suite is fully offline — it never calls the live arXiv API or a real
+SMTP server. Network and mail are mocked.
+
+```bash
+pip install -e '.[dev]'   # installs pytest
+pytest -v
+```
 
 ## Project Structure
 
 ```
-project-root/
+arxiv-papers/
 ├── .github/
 │   └── workflows/
-│       └── send_papers.yml       # GitHub Actions workflow for automation
-├── src/
-│   ├── __init__.py               # Package initialization file
-│   ├── news_email_scheduler.py   # Main script to schedule and send the emails
-│   ├── paper_fetcher.py          # Fetches the latest papers from arXiv
-│   ├── email_sender.py           # Handles email sending with optional attachments
-│   ├── markdown_formatter.py     # Formats papers into markdown for email content
-│   ├── wordcloud_generator.py    # Generates word clouds from the paper data
-│   └── logger.py                 # Configures logging across the application
-├── requirements.txt              # Python dependencies
-├── README.md                     # Project documentation
-└── .gitignore                    # Files and directories to be ignored in Git
+│       └── send_papers.yml      # CI (tests) + scheduled digest job
+├── src/arxiv_digest/
+│   ├── __init__.py
+│   ├── cli.py                   # argparse entry point; drives the pipeline
+│   ├── config.py                # defaults, env/CLI overrides, validation
+│   ├── models.py                # Article dataclass
+│   ├── fetcher.py               # arXiv fetch (the only network dependency)
+│   ├── formatter.py             # HTML email body (pure logic, escapes content)
+│   ├── wordcloud.py             # word cloud PNG (pure logic)
+│   └── emailer.py               # MIME construction + SMTP send
+├── tests/                       # offline pytest suite
+├── pyproject.toml
+├── requirements.txt
+└── README.md
 ```
-
-## Setup Instructions
-
-### 1. Clone the Repository
-
-Clone the repository to your local machine using the following command:
-
-```bash
-git clone https://github.com/yourusername/your-repo-name.git
-```
-
-### 2. Install Dependencies
-
-Navigate to the project directory and install the required Python packages using:
-
-```bash
-cd your-repo-name
-pip install -r requirements.txt
-```
-
-### 3. Configure Environment Variables
-
-You need to set up email credentials as environment variables or GitHub Secrets to send the emails:
-
-- `EMAIL_USERNAME`: Your email address (e.g., example@gmail.com).
-- `EMAIL_PASSWORD`: Your email password or app-specific password.
-
-For GitHub Actions, you can configure these values as secrets by navigating to:
-`Settings > Secrets and Variables > Actions > New repository secret`.
-
-### 4. Running the Script Locally
-
-You can run the script locally for testing by using:
-
-```bash
-python src/news_email_scheduler.py
-```
-
-This will fetch the latest papers, generate a word cloud, and send the email.
-
-## GitHub Actions Automation
-
-The project includes a GitHub Actions workflow that automates fetching papers and sending emails at regular intervals.
-
-- The workflow is defined in `.github/workflows/send_papers.yml`.
-- The script is scheduled to run daily at 8 AM UTC and will send the email automatically.
-
-To trigger the workflow manually, you can use the "Run Workflow" option in the GitHub Actions interface.
-
-### Workflow Configuration
-
-```yaml
-name: Send Latest Papers
-
-on:
-  schedule:
-    - cron: '0 8 * * *'  # Runs daily at 8 AM UTC
-  workflow_dispatch:      # Allows manual triggering
-
-jobs:
-  send_papers:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run Script
-        env:
-          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-        run: |
-          python src/news_email_scheduler.py
-```
-
-## Customization
-
-### Modify Paper Categories
-
-You can modify the arXiv categories being queried by editing the `query` in `src/paper_fetcher.py`:
-
-```python
-self.query = 'cat:cs.LG+OR+cat:cs.AI+OR+cat:cs.NE+OR+cat:cs.CV'
-```
-
-You can refer to [arXiv's category list](https://arxiv.org/category_taxonomy) for more categories.
-
-### Modify Email Recipients
-
-To change the recipients of the email, update the `to_emails` list in `src/news_email_scheduler.py`:
-
-```python
-to_emails = ['recipient@example.com']  # Add more emails as needed
-```
-
-## Contributing
-
-Contributions are welcome! If you'd like to contribute, please fork the repository and submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the `LICENSE` file for details.

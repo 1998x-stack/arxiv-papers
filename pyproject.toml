@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arxiv-digest"
+version = "0.1.0"
+description = "Fetch recent arXiv ML papers, build a word cloud, and email an HTML digest"
+requires-python = ">=3.9"
+dependencies = ["feedparser", "wordcloud", "matplotlib"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+arxiv-digest = "arxiv_digest.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["arxiv_digest"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
